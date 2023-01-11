@@ -1,0 +1,31 @@
+﻿@model DocumentationApp.Models.App
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div class="container mt-5">
+    <h4>App</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AppName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AppName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AppTitle)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AppTitle)
+        </dd>
+    </dl>
+    <div>
+        <a class="btn btn-sm btn-warning" asp-action="AddOrEdit" asp-route-id="@Model.AppID">Edit</a> 
+        <a class="btn btn-sm btn-info" asp-action="Index">Back to List</a>
+    </div>
+</div>
+

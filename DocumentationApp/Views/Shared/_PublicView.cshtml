@@ -1,0 +1,165 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject SignInManager<IdentityUser> SignInManager
+
+
+@{
+
+
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - GTR Documentation</title>
+
+    <!-- Bootstrap CSS -->
+
+    <link rel="stylesheet" href="~/template/assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link href="~/template/assets/vendor/fonts/circular-std/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/template/assets/libs/css/style.css">
+    <link rel="stylesheet" href="~/template/assets/vendor/fonts/fontawesome/css/fontawesome-all.css">
+
+    @*<link rel="stylesheet" href="~/template/assets/vendor/charts/chartist-bundle/chartist.css">*@
+
+    <link rel="stylesheet" href="~/template/assets/vendor/charts/morris-bundle/morris.css">
+    <link rel="stylesheet" href="~/template/assets/vendor/fonts/material-design-iconic-font/css/materialdesignicons.min.css">
+
+    @*<link rel="stylesheet" href="~/template/assets/vendor/charts/c3charts/c3.css">*@
+
+    <link rel="stylesheet" href="~/template/assets/vendor/fonts/flag-icon-css/flag-icon.min.css">
+
+    <style>
+        /*.navbar-brand{
+            font-size: 25px !important;
+        }*/
+        body {
+            background-color: white;
+        }
+
+        #search {
+            margin-left: 20rem !important;
+        }
+    </style>
+
+</head>
+<body>
+    <header>
+
+        @*navbar navbar-expand-lg bg-white fixed-top*@
+
+
+        <div class="dashboard-header">
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 fixed-top">
+                <div class="container">
+                    <a class="navbar-brand" asp-controller="Home" asp-action="Index"><img style="width:50px; height:50px" src="~/images/gtsolution.png" alt="Gtr Logo" /></a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+
+
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between " id="navbarSupportedContent">
+
+
+                        <ul class="navbar-nav flex-grow-1">
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="App" asp-action="PublicView">Docs</a>
+                            </li>
+
+
+
+
+
+                            @if (SignInManager.IsSignedIn(User) && User.IsInRole("Super Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="App" asp-action="Index">Admin</a>
+                                </li>
+
+
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+                                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Users & Roles
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                        <a class="dropdown-item" asp-controller="Administration"
+                                           asp-action="ListUsers">Users</a>
+                                        <a class="dropdown-item" asp-controller="Administration"
+                                           asp-action="ListRoles">Roles</a>
+                                        <a class="dropdown-item" asp-controller="Administration"
+                                           asp-action="RegisterWithRole">Create User With Role</a>
+                                    </div>
+                                </li>
+                            }
+
+                            @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin") || User.IsInRole("Developer"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="App" asp-action="Index">Admin</a>
+                                </li>
+                            }
+
+                            @*@if (Context.Session.GetInt32("AppID") != null)
+                            {
+                                <li id="search" class="form-inline ml-5 my-2 my-lg-0 float-right">
+                                    <input id="searchValue" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                                    <button id="btnSearch" class="btn btn-sm btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                                </li>
+                            }*@
+
+
+
+                        </ul>
+
+                        <partial name="_LoginPartial" />
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <div>
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    @*<footer class="border-top footer text-muted">
+            <div class="container">
+                &copy; 2021 - DocumentationApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </div>
+        </footer>*@
+
+
+    <script src="~/template/assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+    <!-- bootstap bundle js -->
+    <script src="~/template/assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+    <!-- slimscroll js -->
+    <script src="~/template/assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+    <!-- main js -->
+    <script src="~/template/assets/libs/js/main-js.js"></script>
+    <!-- chart chartist js -->
+    <script src="~/template/assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
+    <!-- sparkline js -->
+    <script src="~/template/assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
+    <!-- morris js -->
+    <script src="~/template/assets/vendor/charts/morris-bundle/raphael.min.js"></script>
+    <script src="~/template/assets/vendor/charts/morris-bundle/morris.js"></script>
+
+
+    <!-- chart c3 js -->
+    @*<script src="~/template/assets/vendor/charts/c3charts/c3.min.js"></script>
+        <script src="~/template/assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
+        <script src="~/template/assets/vendor/charts/c3charts/C3chartjs.js"></script>
+        <script src="~/template/assets/libs/js/dashboard-ecommerce.js"></script>*@
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+   
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

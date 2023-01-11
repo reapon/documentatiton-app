@@ -1,0 +1,169 @@
+﻿@model IEnumerable<DocumentationApp.Models.Menu>
+
+@inject SignInManager<IdentityUser> SignInManager
+
+@{
+    ViewData["Title"] = "ShowContents";
+
+    App appid = ViewBag.AppList;
+
+    //var currentUser = ViewBag.CurrentUser;
+
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/1.11.1/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/r/dt/jq-2.1.4,jszip-2.5.0,pdfmake-0.1.18,dt-1.10.9,af-2.0.0,b-1.0.3,b-colvis-1.0.3,b-html5-1.0.3,b-print-1.0.3,se-1.0.1/datatables.min.css" />
+
+
+<h1>ShowContents</h1>
+
+<div class="container mt-5 pt-3">
+    <a class="btn btn-success" asp-action="StartDocument" asp-route-id="@appid.AppID" title="Create Menu & Content"><i class="fa fa-plus"></i></a>
+    <br /><br />
+
+    <table class="table" id="menu-table">
+        <thead>
+            <tr>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.MenuText)
+                </th>
+                <th>
+                    Parent Menu
+                </th>
+
+                @if (SignInManager.IsSignedIn(User) && User.IsInRole("Super Admin"))
+                {
+                    <th>Status</th>
+                }
+
+                <th>Action</th>
+
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                @foreach (var i in item.Contents.OrderByDescending(x => x.VersionNo).Take(1))
+                {
+
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.MenuText)
+
+                </td>
+
+                <td>
+
+                    @Html.DisplayFor(modelItem => item.Parent.MenuText)
+
+                </td>
+
+                @if (SignInManager.IsSignedIn(User) && User.IsInRole("Super Admin"))
+                {
+                    <td>
+                        @if (item.IsPublished == true)
+                        {
+                            <button class="badge badge-success border-0" title="Click to un-publish this Menu" data-menuId="@item.MenuID" onclick="UnPublishMenu(@item.MenuID)">Published</button>
+                        }
+                        else
+                        {
+                            <button class="badge badge-dark text-white border-0" data-menuId="@item.MenuID" onclick="PublishMenu(@item.MenuID)" title="Click To Publish This Menu">Not Published</button>
+
+
+                        }
+                    </td>
+                }
+
+
+                <td>
+                    <a style="color:white;" class="btn btn-sm btn-warning" asp-action="Edit" asp-route-AppId="@item.AppID" asp-route-id="@item.MenuID" asp-route-version="@i.VersionNo" title="Edit Menu & Content"><i class="fa fa-edit"></i></a>
+
+
+                    <a class="btn btn-sm btn-danger" asp-action="DeleteMenu" asp-route-id="@item.MenuID" onclick="return confirm('Are you sure you want to delete this menu?')" title="Delete Menu"><i class="fa fa-trash"></i></a>
+
+                </td>
+
+
+            </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+
+    <br />
+    <hr />
+    <a style="color:white;" asp-action="Index" asp-controller="App" class="btn btn-sm btn-primary">Back To App List</a>
+</div>
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/r/dt/jq-2.1.4,jszip-2.5.0,pdfmake-0.1.18,dt-1.10.9,af-2.0.0,b-1.0.3,b-colvis-1.0.3,b-html5-1.0.3,b-print-1.0.3,se-1.0.1/datatables.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#menu-table').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'excel', 'print'
+                ],
+                "order": []
+            });
+        });
+
+
+        function PublishMenu(menuid) {
+            try {
+                $.ajax({
+                    url: '@Url.Action("PublishMenu", "App")',
+                    type: "POST",
+                    data: { menuId: menuid },
+                    success: function (oData) {
+                        console.log(oData);
+                        location.reload();
+
+                        toastr.success('Menu Published...');
+
+                    },
+                    error: function (error) {
+                        console.log(oData);
+                    }
+                });
+            }
+            catch (e) {
+                console.log(e.message);
+            }
+        }
+
+
+        function UnPublishMenu(menuid) {
+            try {
+                $.ajax({
+                    url: '@Url.Action("UnPublishMenu", "App")',
+                    type: "POST",
+                    data: { menuId: menuid },
+                    success: function (oData) {
+                        console.log(oData);
+                        location.reload();
+
+                        toastr.success('Menu Un-Published...');
+
+                    },
+                    error: function (error) {
+                        console.log(oData);
+                    }
+                });
+            }
+            catch (e) {
+                console.log(e.message);
+            }
+        }
+
+    </script>
+
+}

@@ -1,0 +1,170 @@
+﻿
+@{
+
+    Layout = null;
+
+    App app = ViewBag.MenuLevel1;
+    List<Menu> Menus = app?.Menus.ToList();
+
+    
+    
+    //int? selectedMenuId = ViewBag.SelectedMenu;
+
+}
+<link href="~/template/documentation/css/bootstrap.min.css" rel="stylesheet" />
+<style>
+    .menu-height {
+        height: 1300px;
+    }
+
+    ul{
+        list-style:none;
+    }
+
+    li{
+        line-height:2;
+    }
+
+    body {
+        line-height: 1.8;
+    }
+</style>
+
+<br />
+<br />
+
+<div class="container py-3">
+    <div class="row menu-height">
+
+        <ul>
+            @foreach (var menuLevel1 in Menus.Where(x => x.ParentID == null))
+            {
+                <li class="nav-item">
+
+
+                    @if (menuLevel1.ChildMenu != null)
+                    {
+                        @if (menuLevel1.ChildMenu.Count > 0)
+                        {
+                            <a class="nav-link">
+
+                                @menuLevel1.MenuText
+
+
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <a class="nav-link">
+
+
+                            @menuLevel1.MenuText
+                        </a>
+                    }
+
+                    @if (menuLevel1.ChildMenu != null)
+                    {
+                        @if (menuLevel1.ChildMenu.Count > 0)
+                        {
+
+                            <div>
+                                @{
+                                    await ShowTree(menuLevel1.ChildMenu);
+                                }
+                            </div>
+
+
+                        }
+                    }
+
+
+                </li>
+            }
+        </ul>
+    </div>
+
+    <br />
+    <div class="row">
+        @foreach (var content in Menus)
+        {
+            
+            <div class="content-height">
+
+                <h1 style="text-align:center;">@content.MenuText</h1>
+                <hr />
+                <br />
+                <div class="m-3 p-3">
+
+                    @foreach (var con in content.Contents.OrderByDescending(x=>x.VersionNo).Take(1))
+                    {
+                        @Html.Raw(con.ContentBody)
+
+                    }
+
+
+
+                </div>
+
+            </div>
+        }
+    </div>
+</div>
+
+
+
+
+
+
+@functions {
+
+    public async Task ShowTree(ICollection<Menu> menus)
+    {
+
+
+        <ul class="nav flex-column">
+            @foreach (var menu in menus)
+            {
+                <li class="nav-item">
+                    @if (menu.ChildMenu != null)
+                    {
+
+                        @if (menu.ChildMenu.Count > 0)
+                        {
+                            <a class="nav-link">
+                                @menu.MenuText
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <a class="nav-link">
+
+
+
+                            @menu.MenuText
+
+                        </a>
+                    }
+
+                    @if (menu.ChildMenu != null)
+                    {
+
+                        @if (menu.ChildMenu.Count > 0)
+                        {
+                            <div style="">
+                                @{
+                                    await ShowTree(menu.ChildMenu.ToList());
+                                }
+                            </div>
+
+                        }
+
+
+                    }
+                </li>
+            }
+        </ul>
+
+    }
+}

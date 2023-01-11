@@ -1,0 +1,18 @@
+﻿@model IEnumerable<DocumentationApp.Models.Content>
+
+
+@{
+    Layout = null;
+}
+
+<link href="~/template/documentation/css/bootstrap.min.css" rel="stylesheet" />
+
+
+<div class="container mx-5 px-3">
+    @foreach (var i in Model.OrderByDescending(x => x.VersionNo).Take(1))
+    {
+
+            @Html.Raw(i.ContentBody)
+
+    }
+</div>

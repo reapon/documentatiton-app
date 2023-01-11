@@ -1,0 +1,148 @@
+﻿@model IEnumerable<DocumentationApp.Models.App>
+
+@inject SignInManager<IdentityUser> SignInManager
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/1.11.1/css/jquery.dataTables.min.css" rel="stylesheet" />
+
+<h1>Index</h1>
+<div class="container mt-5">
+    <div class="text-center">
+        <h1 class="badge badge-success">Create New Documentation App</h1>
+
+    </div>
+    <p>
+        <a asp-action="AddOrEdit" class="btn btn-sm btn-success" title="Create App"><i class="fa fa-plus"></i></a>
+    </p>
+    <table class="table table-bordered table-striped table-hover table-responsive-lg" id="app-table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.AppName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AppTitle)
+                </th>
+                @if (SignInManager.IsSignedIn(User) && User.IsInRole("Super Admin"))
+                {
+                    <th>Status</th>
+                }
+
+                <th>Action</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AppName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AppTitle)
+                </td>
+
+                @if (SignInManager.IsSignedIn(User) && User.IsInRole("Super Admin"))
+                {
+                    <td>
+                        @if (item.IsPublished == true)
+                        {
+                            <button class="badge badge-success border-0" title="Click to un-publish this App" data-appId="@item.AppID" onclick="UnPublishApp(@item.AppID)">Published</button>
+                        }
+                        else
+                        {
+                            <button id="publishBtn" class="badge badge-warning text-white border-0" data-appId="@item.AppID" onclick="PublishApp(@item.AppID)" title="Click To Publish This App">Not Published</button>
+
+
+                        }
+                    </td>
+                }
+
+
+
+
+                <td>
+                    <a style="color:white;" class="btn btn-sm btn-warning" asp-action="AddOrEdit" asp-route-id="@item.AppID" title="Edit App"><i class="fa fa-edit"></i></a>
+                    @*<a class="btn btn-sm btn-success" asp-action="Details" asp-route-id="@item.AppID">Details</a>*@
+                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.AppID" onclick="return confirm('Are you sure you want to delete?')" title="Delete App"><i class="fa fa-trash"></i></a>
+                    <a class="btn btn-sm btn-primary" asp-action="ShowContents" asp-route-id="@item.AppID" title="Show Contents"><i class="fa fa-eye"></i></a>
+
+
+                </td>
+
+
+
+
+
+
+
+            </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#app-table').DataTable();
+        });
+
+
+
+        function PublishApp(appid) {
+            try {
+                $.ajax({
+                    url: '@Url.Action("PublishApp", "App")',
+                    type: "POST",
+                    data: { appId: appid },
+                    success: function (oData) {
+                        console.log(oData);
+                        toastr.success('App Published...');
+                        location.reload();
+
+                    },
+                    error: function (error) {
+                        console.log(oData);
+                    }
+                });
+            }
+            catch (e) {
+                console.log(e.message);
+            }
+        }
+
+
+        function UnPublishApp(appid) {
+            try {
+                $.ajax({
+                    url: '@Url.Action("UnPublishApp", "App")',
+                    type: "POST",
+                    data: { appId: appid },
+                    success: function (oData) {
+                        console.log(oData);
+                        toastr.success('App Un-Published...');
+                        location.reload();
+
+                    },
+                    error: function (error) {
+                        console.log(oData);
+                    }
+                });
+            }
+            catch (e) {
+                console.log(e.message);
+            }
+        }
+    </script>
+
+}

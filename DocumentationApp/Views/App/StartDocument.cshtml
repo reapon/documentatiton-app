@@ -1,0 +1,212 @@
+﻿@model DocumentationApp.ViewModel.MenuViewModel
+
+@inject SignInManager<IdentityUser> SignInManager
+
+@{
+    //ViewData["Title"] = "Create";
+
+    var versionNo = ViewBag.VersionNo;
+
+}
+
+<style>
+    .fixedBtn {
+        position: fixed;
+        display: block;
+        z-index: 10;
+        right: 0;
+        bottom: 0;
+    }
+</style>
+
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
+@*<link href="~/js/simditor-2.3.28/site/assets/styles/simditor.css" rel="stylesheet" />*@
+
+@*<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">*@
+
+
+<h1>Create</h1>
+
+
+<div class="container mt-5">
+    <div class="text-center">
+        <h4 class="badge badge-info">Menu & Content</h4>
+
+    </div>
+
+    <div class="row">
+        <form asp-action="StartDocument">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="MenuID" />
+            <input type="hidden" asp-for="ContentID" />
+
+            <input type="hidden" asp-for="AppID" value="@ViewBag.AppId" />
+
+            <input type="hidden" class="form-check-input" asp-for="MenuPublish">
+
+
+            <div class="form-group">
+                <label asp-for="MenuText" class="control-label"></label>
+                <input asp-for="MenuText" class="form-control" placeholder="Menu Name" required />
+                <span asp-validation-for="MenuText" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="MenuTags" class="control-label"></label>
+                <input asp-for="MenuTags" class="form-control" required placeholder="Add Tags With Comma Separated Values , Example : tags, tag" />
+                <span asp-validation-for="MenuTags" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ParentID" class="control-label"></label>
+                <select asp-for="ParentID" class="form-control" asp-items="ViewBag.ParentID">
+                    <option value="">---Select Parent Menu----</option>
+                </select>
+            </div>
+
+            @if (Model.MenuID > 0)
+            {
+                <div class="form-group">
+                    <label asp-for="VersionNo" class="control-label"></label>
+                    <input asp-for="VersionNo" value="@versionNo" class="form-control" />
+                    <span asp-validation-for="VersionNo" class="text-danger"></span>
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <label asp-for="VersionNo" class="control-label"></label>
+                    <input asp-for="VersionNo" value="1" class="form-control" />
+                    <span asp-validation-for="VersionNo" class="text-danger"></span>
+                </div>
+            }
+
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" asp-for="IsRestricted">
+                <label class="form-check-label">Restricted</label>
+                <span asp-validation-for="IsRestricted" class="text-danger"></span>
+
+            </div>
+
+
+            @*@if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+        {
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" asp-for="MenuPublish">
+                <label class="form-check-label">Menu Publish</label>
+                <span asp-validation-for="MenuPublish" class="text-danger"></span>
+
+            </div>
+
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" asp-for="ContentPublish">
+                <label class="form-check-label">Content Publish</label>
+                <span asp-validation-for="ContentPublish" class="text-danger"></span>
+
+            </div>
+        }*@
+
+
+            <div class="form-group">
+                <label asp-for="ContentTitle" class="control-label"></label>
+                <input asp-for="ContentTitle" class="form-control" placeholder="Write Content Title.." required />
+                <span asp-validation-for="ContentTitle" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Content" class="control-label"></label>
+                <textarea asp-for="Content" id="Content" class="form-control" required> </textarea>
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+
+            @if (Model.MenuID > 0)
+            {
+                <div class="form-group">
+                    <input style="color:white;" type="submit" value="Update" class="btn btn-warning fixedBtn" />
+                </div>
+
+            }
+            else
+            {
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-success fixedBtn" />
+                </div>
+
+            }
+
+
+
+        </form>
+    </div>
+
+
+</div>
+
+<div style="margin-left:3.8rem;">
+    <a class="btn btn-primary" asp-action="ShowContents" asp-controller="App" asp-route-id="@ViewBag.AppId">Back to List</a>
+</div>
+
+
+@*<script src="~/js/simditor-2.3.28/site/assets/scripts/jquery.min.js"></script>
+    <script src="~/js/simditor-2.3.28/site/assets/scripts/module.js"></script>
+    <script src="~/js/simditor-2.3.28/site/assets/scripts/hotkeys.js"></script>
+    <script src="~/js/simditor-2.3.28/site/assets/scripts/uploader.js"></script>
+    <script src="~/js/simditor-2.3.28/site/assets/scripts/simditor.js"></script>
+
+    <script>
+        var editor = new Simditor({
+            textarea: $('#Content'),
+
+            placeholder: '',
+            defaultImage: 'images/image.png',
+            params: {},
+            upload: true,
+            tabIndent: true,
+            toolbar: [
+                'title',
+                'bold',
+                'italic',
+                'underline',
+                'strikethrough',
+                'fontScale',
+                'color',
+                'ol',
+                'ul',
+                'blockquote',
+                'code',
+                'table',
+                'link',
+                'image',
+                'hr',
+                'indent',
+                'outdent',
+                'alignment',
+            ],
+            toolbarFloat: true,
+            toolbarFloatOffset: 0,
+            toolbarHidden: false,
+            pasteImage: true,
+            cleanPaste: false,
+        });
+    </script>*@
+
+
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#Content').summernote({
+                tabsize: 2,
+                height: 500,
+                minHeight: null,             // set minimum height of editor
+                maxHeight: null,             // set maximum height of editor
+                focus: true
+            });
+        });
+
+        
+    </script>
+}
